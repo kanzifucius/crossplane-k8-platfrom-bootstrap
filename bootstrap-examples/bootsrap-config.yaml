@@ -1,0 +1,11 @@
+apiVersion: bootstraps.platfrom.quantum.crossplane.io/v1alpha1
+kind: Config
+metadata:
+  name: test-logging
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
+spec:
+  reloader:
+      version: "v0.0.50"
+  providerConfigRef:
+    name : helm-provider-config

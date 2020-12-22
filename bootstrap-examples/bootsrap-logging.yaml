@@ -1,0 +1,11 @@
+apiVersion: bootstraps.platfrom.quantum.crossplane.io/v1alpha1
+kind: Logging
+metadata:
+  name: test-config
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
+spec:
+  loki:
+      version: "2.1.2"
+  providerConfigRef:
+    name : helm-provider-config

@@ -1,0 +1,42 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: logging.bootstraps.platfrom.quantum.crossplane.io
+  labels:
+    plan: full
+    provider: helm
+spec:
+  writeConnectionSecretsToNamespace: crossplane-system
+  compositeTypeRef:
+    apiVersion:  bootstraps.platfrom.quantum.crossplane.io/v1alpha1
+    kind: Logging
+  resources:
+    - base:
+        apiVersion: helm.crossplane.io/v1beta1
+        kind: Release
+        spec:
+          forProvider:
+            chart:
+              name: loki-stack
+              repository: 'https://grafana.github.io/loki/charts'
+              version: 2.1.2
+            namespace: bootstrap-logging
+            set:
+              - name: fluent-bit.enabled
+                value: 'false'
+              - name: promtail.enabled
+                value: 'false'
+            values: { }
+          rollbackLimit: 3
+      patches:
+        # All Helm releases derive their labels and annotations from the XR.
+        - fromFieldPath: metadata.labels
+          toFieldPath: metadata.labels
+        - fromFieldPath: metadata.annotations
+          toFieldPath: metadata.annotations
+        # All Helm releases derive the ProviderConfig to use from the XR.
+        - fromFieldPath: spec.providerConfigRef.name
+          toFieldPath: spec.providerConfigRef.name
+        # Derive the loki operator image and tag from the XR.
+        - fromFieldPath: spec.operators.loki.version
+          toFieldPath: spec.forProvider.chart.version

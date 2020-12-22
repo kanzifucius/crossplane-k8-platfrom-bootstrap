@@ -1,0 +1,20 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: comositebootstap.bootstraps.platfrom.quantum.crossplane.io
+  labels:
+    plan: full
+    provider: helm
+spec:
+  writeConnectionSecretsToNamespace: crossplane-system
+  compositeTypeRef:
+    apiVersion: platfrom.quantum.crossplane.io/v1alpha1
+    kind: bootstrap
+  resources:
+    - base:
+        apiVersion: aws.platfrom.quantum.crossplane.io/v1alpha1
+        kind: Logging
+      patches:
+        # All Helm releases derive the ProviderConfig to use from the XR.
+        - fromFieldPath: spec.providerConfigRef.name
+          toFieldPath: spec.providerConfigRef.name
